@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -26,7 +27,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.projects.create');
     }
 
     /**
@@ -37,7 +38,11 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $this->validation($request->all());
+        $project = new Project;
+        $project->fill($data);
+        $project->save();
+        return to_route('admin.projects.show', $project);
     }
 
     /**
@@ -59,6 +64,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        return view('admin.projects.edit', compact('project'));
     }
 
     /**
@@ -70,7 +76,9 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //
+        $data = $this->validation($request->all(), $project->id);
+        $project->update($data);
+        return to_route('admin.projects.show', $project);
     }
 
     /**
@@ -81,6 +89,30 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+        return to_route('admin.projects.index');
+    }
+
+    private function validation($data)
+    {
+
+        return Validator::make(
+            $data,
+            [
+                'name' => 'required',
+                'description' => 'required',
+                'programming_languages' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required',
+            ],
+            [
+                'name.required' => 'Il nome è obbligatorio',
+                'description.required' => "La descrizione è obbligatoria",
+                'programming_languages.required' => "I linguaggi utilizzati sono obbligatori",
+                'start_date.required' => "Inserire la data di inizio",
+                'end_date.required' => "Inserire la data di fine",
+
+            ]
+        )->validate();
     }
 }
