@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('programming_languages');
             $table->date('start_date');
             $table->date('end_date');
+            $table->text('image')->nullable();
             $table->timestamps();
         });
     }

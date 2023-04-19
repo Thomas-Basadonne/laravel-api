@@ -14,7 +14,7 @@
             </ul>
         </div>
     @endif
-    <form action="{{ route('admin.projects.store') }}" method="POST">
+    <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="row">
@@ -36,9 +36,30 @@
                 <label for="end_date" class="form-label">Data fine</label>
                 <input type="date" class="form-control" id="end_date" name="end_date" alue="{{ old('end_date') }}" />
             </div>
-            <textarea class="col-6 mt-3 ms-3" name="description" id="description" placeholder="Descrizione">{{ old('description') }}</textarea>
-        </div>
+            <textarea class="col-10 my-4 ms-3" name="description" id="description" placeholder="Descrizione">{{ old('description') }}</textarea>
+            <div class="col-4">
+                <input type="file" name="image" id="image" class="form-control">
+            </div>
+            <div class="col-3">
+                <img src="{{ $project->getImageUri() }}" alt="" class="img-fluid my-3" id="image-preview">
+            </div>
 
         <button type="submit" class="btn btn-primary mt-4">Salva</button>
     </form>
+@endsection
+
+@section('script')
+    <script>
+        const imageEl = document.getElementById('image');
+        const imagePreviewEl = document.getElementById('image-preview');
+        imageEl.addEventListener('change', () => {
+            if (imageEl.files && imageEl.files[0]) {
+                const reader = new FileReader();
+                reader.readAsDataURL(imageEl.files[0]);
+                reader.onload = e => {
+                    imagePreviewEl.src = e.target.result
+                }
+            }
+        })
+    </script>
 @endsection

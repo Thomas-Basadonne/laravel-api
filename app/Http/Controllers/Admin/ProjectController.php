@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
@@ -25,9 +27,9 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Project $project)
     {
-        return view('admin.projects.create');
+        return view('admin.projects.create', compact('project'));
     }
 
     /**
@@ -39,8 +41,13 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $data = $this->validation($request->all());
+         // controllo presenza un'file image
+         if (Arr::exists($data, 'image')) {
+            $path = Storage::put('uploads/project', $data['image']);
+        }
         $project = new Project;
         $project->fill($data);
+        $project->image = $path;
         $project->save();
         return to_route('admin.projects.show', $project);
     }
@@ -77,7 +84,14 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $data = $this->validation($request->all(), $project->id);
-        $project->update($data);
+        if (Arr::exists($data, 'image')) {
+            if ($project->image) Storage::delete($project->image);
+            $path = Storage::put('uploads/project', $data['image']);
+        }
+
+        $project->fill($data);
+        $project->image = $path;
+        $project->save();        
         return to_route('admin.projects.show', $project);
     }
 
@@ -89,6 +103,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        if ($project->image) Storage::delete($project->image);
         $project->delete();
         return to_route('admin.projects.index');
     }
@@ -104,6 +119,7 @@ class ProjectController extends Controller
                 'programming_languages' => 'required',
                 'start_date' => 'required',
                 'end_date' => 'required',
+                'image' => 'nullable|image|mimes:jpg,jpeg,png',
             ],
             [
                 'name.required' => 'Il nome è obbligatorio',
@@ -111,7 +127,8 @@ class ProjectController extends Controller
                 'programming_languages.required' => "I linguaggi utilizzati sono obbligatori",
                 'start_date.required' => "Inserire la data di inizio",
                 'end_date.required' => "Inserire la data di fine",
-
+                'image.image' => "Il file inserito deve essere un'immagine",
+                'image.mimes' => "Il file deve essere:jpg,jpeg,png"
             ]
         )->validate();
     }

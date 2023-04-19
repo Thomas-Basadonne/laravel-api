@@ -9,5 +9,8 @@ class Project extends Model
 {
     use HasFactory;
     protected $fillable = ["name", "programming_languages", "start_date", "end_date", "description"];
-
+    public function getImageUri()
+    {
+        return $this->image ? asset('storage/' . $this->image) : 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/681px-Placeholder_view_vector.svg.png';
+    }
 }

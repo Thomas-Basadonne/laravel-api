@@ -27,6 +27,7 @@
             <h1 class="my-5">@yield('title')</h1>
             @yield('content')
         </main>
+        @yield('script')
 </body>
 
 </html>
