@@ -13,9 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('project_technology', function (Blueprint $table) {
+        Schema::create('boolfolio_technology', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+
+            $table->foreignId('boolfolio_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('technology_id')
+                ->constrained()
+                ->cascadeOnDelete();
         });
     }
 
@@ -26,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_technology');
+        Schema::dropIfExists('boolfolios_technologies');
     }
 };
