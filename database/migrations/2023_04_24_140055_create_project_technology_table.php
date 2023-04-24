@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('boolfolio_technology', function (Blueprint $table) {
+        Schema::create('project_technology', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('boolfolio_id')
+            $table->foreignId('project_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('boolfolios_technologies');
+        Schema::dropIfExists('projects_technologies');
     }
 };
