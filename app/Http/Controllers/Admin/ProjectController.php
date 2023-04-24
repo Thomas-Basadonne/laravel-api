@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +30,8 @@ class ProjectController extends Controller
      */
     public function create(Project $project)
     {
-        return view('admin.projects.create', compact('project'));
+        $types = Type::all();
+        return view('admin.projects.create', compact('project', 'types'));
     }
 
     /**
@@ -71,7 +73,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::all();
+        return view('admin.projects.edit', compact('project', 'types'));
     }
 
     /**
@@ -120,6 +123,7 @@ class ProjectController extends Controller
                 'start_date' => 'required',
                 'end_date' => 'required',
                 'image' => 'nullable|image|mimes:jpg,jpeg,png',
+                'type_id' => 'nullable|exists:types,id'
             ],
             [
                 'name.required' => 'Il nome è obbligatorio',
