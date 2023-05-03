@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use App\Mail\PublishedProjectMail;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Type;
@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ProjectController extends Controller
 {
@@ -94,7 +96,11 @@ class ProjectController extends Controller
 
         $project->fill($data);
         $project->image = $path;
-        $project->save();        
+        $project->save(); 
+        
+        $mail = new PublishedProjectMail($project);
+        $user_email = Auth::user()->email;
+        Mail::to($user_email)->send($mail);
         return to_route('admin.projects.show', $project);
     }
 
